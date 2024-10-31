@@ -1,3 +1,13 @@
+#### Compile assimp
+
+> cd ext/assimp
+> mkdir build && cd build
+> cmake .. -G "Visual Studio 17 2022"
+
+Use VS2022 to open `Assimp.sln`.
+
+#### Compile this project
+
 Init:
 
 > mkdir build
@@ -10,4 +20,4 @@ Build:
 
 Run:
 
-> Debug\rendering_project.exe
+> Debug\main.exe

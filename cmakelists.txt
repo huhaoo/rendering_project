@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.13)
+project(rendering_project)
+set(EXECUTABLE_NAME main)
+
+# 设置Assimp的包含目录和库目录
+set(ASSIMP_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/assimp/include")
+# set(ASSIMP_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/ext/assimp/build")
+set(ASSIMP_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/ext/assimp/build/lib/Release/")
+set(ASSIMP_BUILD_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/assimp/build/include")
+set(ASSIMP_DLL_DIR "${CMAKE_SOURCE_DIR}/ext/assimp/build/bin/Release")  # .dll 文件所在目录
+
+# 添加你的源文件
+add_executable(${EXECUTABLE_NAME} src/main.cpp)
+
+# 设置Assimp的包含目录
+target_include_directories(${EXECUTABLE_NAME} PRIVATE "${ASSIMP_INCLUDE_DIR}" "${ASSIMP_BUILD_INCLUDE_DIR}")
+
+# 设置Assimp的库目录
+target_link_directories(${EXECUTABLE_NAME} PRIVATE "${ASSIMP_LIBRARY_DIR}")
+
+# 链接Assimp库
+target_link_libraries(${EXECUTABLE_NAME} PRIVATE assimp-vc143-mt)
+
+# 将 .dll 文件目录添加到运行路径中
+add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${ASSIMP_DLL_DIR}/assimp-vc143-mt.dll"   # .dll 文件的具体名称
+    $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>)  # 将 DLL 复制到可执行文件所在目录
