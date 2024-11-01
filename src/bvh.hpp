@@ -28,5 +28,5 @@ public:
 		}
 	}
 };
-__host__ int constructure(triangle *p, int l, int r, std::vector<bvh_node> &b);
-__host__ __device__ void intersect(const ray &r, const bvh_node *b, const triangle *t, int &id, F &d);
+int constructure(triangle *p, int l, int r, std::vector<bvh_node> &b);
+__host__ __device__ void intersect_bvh(const ray &r, const bvh_node *b, const triangle *t, int &id, F &d);

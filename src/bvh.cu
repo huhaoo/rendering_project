@@ -7,7 +7,8 @@
 #include<random>
 #include<math.h>
 
-__host__ int constructure(triangle *p, int l, int r, std::vector<bvh_node> &b)
+//__host__ int constructure(triangle *p, int l, int r, std::vector<bvh_node> &b)
+int constructure(triangle *p, int l, int r, std::vector<bvh_node> &b)
 {
 	static std::mt19937 Rand(rand_seed);
 	int i=b.size(); b.push_back(bvh_node(p,l,r));

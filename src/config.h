@@ -10,3 +10,5 @@ constexpr int       bvh_leaf_size=4;
 constexpr unsigned      rand_seed=123465789;
 // Max depth of bvh tree
 constexpr int       bvh_max_depth=31;
+
+// #define use_cuda
