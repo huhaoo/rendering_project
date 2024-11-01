@@ -1,6 +1,18 @@
 cmake_minimum_required(VERSION 3.13)
-project(rendering_project)
+project(rendering_project LANGUAGES CXX CUDA)
 set(EXECUTABLE_NAME main)
+set(CMAKE_CUDA_ARCHITECTURES 86)  # 针对 Ampere 架构
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
+# 添加你的源文件
+set(SOURCES
+    src/main.cpp
+    src/intersect.cu
+    src/geometry.cu
+    src/bvh.cu
+)
+add_executable(${EXECUTABLE_NAME} ${SOURCES})
+set_target_properties(${EXECUTABLE_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
 # 设置Assimp的包含目录和库目录
 set(ASSIMP_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/assimp/include")
@@ -8,21 +20,20 @@ set(ASSIMP_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/assimp/include")
 set(ASSIMP_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/ext/assimp/build/lib/Release/")
 set(ASSIMP_BUILD_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/assimp/build/include")
 set(ASSIMP_DLL_DIR "${CMAKE_SOURCE_DIR}/ext/assimp/build/bin/Release")  # .dll 文件所在目录
-
-# 添加你的源文件
-add_executable(${EXECUTABLE_NAME} src/main.cpp)
-
-# 设置Assimp的包含目录
 target_include_directories(${EXECUTABLE_NAME} PRIVATE "${ASSIMP_INCLUDE_DIR}" "${ASSIMP_BUILD_INCLUDE_DIR}")
-
-# 设置Assimp的库目录
 target_link_directories(${EXECUTABLE_NAME} PRIVATE "${ASSIMP_LIBRARY_DIR}")
-
-# 链接Assimp库
 target_link_libraries(${EXECUTABLE_NAME} PRIVATE assimp-vc143-mt)
-
-# 将 .dll 文件目录添加到运行路径中
 add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${ASSIMP_DLL_DIR}/assimp-vc143-mt.dll"   # .dll 文件的具体名称
     $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>)  # 将 DLL 复制到可执行文件所在目录
+
+set(CUDA_TOOLKIT_ROOT_DIR "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.6")
+include_directories("${CUDA_TOOLKIT_ROOT_DIR}/include")
+link_directories("${CUDA_TOOLKIT_ROOT_DIR}/lib/x64")
+target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+# 优化参数
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -use_fast_math")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xptxas -O3")
